@@ -1,18 +1,17 @@
 import os
 import json
 import re
-from google import genai
+import google.generativeai as genai
 
 from question_feature_mapping import QUESTIONNAIRE, OPTION_TO_VALUE, CLASS_LABELS
 
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
-
 if not GEMINI_API_KEY:
     raise ValueError("GEMINI_API_KEY not found. Set it before running.")
 
-client = genai.Client(api_key=GEMINI_API_KEY)
+genai.configure(api_key=GEMINI_API_KEY)
 
 
 def extract_json(text):
@@ -102,16 +101,13 @@ Return exactly this JSON format:
 }}
 """
 
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=prompt
-    )
+    gemini_model = genai.GenerativeModel("gemini-2.5-flash")
+    response = gemini_model.generate_content(prompt)
 
     raw_text = response.text.strip()
     result = extract_json(raw_text)
 
     option_scores = normalize_scores(result.get("option_scores", {}))
-
     selected_option = max(option_scores, key=option_scores.get)
 
     value = OPTION_TO_VALUE[selected_option]
@@ -191,7 +187,6 @@ def build_feature_vector(mapped_answers):
         feature_values[item["feature"]] = item["value"]
 
     vector = []
-
     missing_features = []
 
     for feature in MODEL_FEATURES:
