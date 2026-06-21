@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siddha Clinical XAI Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+
+    <style>
+        body { max-width: 1150px; margin: 0 auto; padding: 25px; font-family: system-ui, sans-serif; background-color: #0f172a; color: #f8fafc; }
+        .dashboard-card { background: #1e293b; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border: 1px solid #334155; margin-top: 20px; }
+        h1, h2, h3, h4 { color: #38bdf8; margin-top: 0; }
+        .prediction-header { color: #4ade80 !important; font-size: 1.8em; font-weight: bold; border-bottom: 2px solid #334155; padding-bottom: 10px; }
+        .flex-container { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 20px; }
+        .panel-60 { flex: 1.5; min-width: 350px; }
+        .panel-40 { flex: 1; min-width: 300px; background: #0f172a; padding: 15px; border-radius: 8px; border: 1px solid #334155; }
+        .summary-card { flex: 1; min-width: 230px; background:#0f172a; border:1px solid #334155; border-radius:10px; padding:15px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: #0f172a; font-size: 0.92em; }
+        th, td { padding: 10px; border: 1px solid #334155; text-align: left; color: #cbd5e1; vertical-align: top; }
+        th { background-color: #0284c7; color: white; font-weight: bold; }
+        .narrative-box { background: #0f172a; padding: 20px; border-left: 5px solid #38bdf8; border-radius: 6px; line-height: 1.7; font-size: 1.05em; text-align: justify; }
+        .prob-bar-container { background: #334155; border-radius: 6px; margin: 10px 0; padding: 3px; }
+        .prob-bar { height: 22px; border-radius: 4px; text-align: right; padding-right: 10px; color: white; font-weight: bold; font-size: 0.85em; line-height: 22px; min-width: 35px; }
+        .note-box { background:#172554; border-left: 5px solid #60a5fa; padding: 14px; border-radius: 6px; color:#dbeafe; margin-top: 15px; }
+        .action-btn { color: white; font-weight: bold; padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; margin-right: 10px; }
+        .badge { display:inline-block; padding:6px 10px; border-radius:20px; font-weight:bold; background:#334155; color:#e2e8f0; }
+    </style>
+</head>
+
+<body>
+
+<h1>📊 Siddha Prakriti Analysis Report</h1>
+
+<p style="color: #94a3b8;">
+    Patient Context:
+    <b>{{ report.demographics.name }}</b>
+    (Age: {{ report.demographics.age }} |
+    Gender: {{ report.demographics.gender }} |
+    Location: {{ report.demographics.location }} |
+    Language: {{ report.language }})
+</p>
+
+<div class="dashboard-card">
+
+    <div class="prediction-header">
+        Final Hybrid Constitution: {{ report.prediction }}
+    </div>
+
+    <h3 style="margin-top:25px;">🧬 Hybrid Decision Summary</h3>
+    <div class="flex-container">
+        <div class="summary-card">
+            <h4>Machine Learning Model</h4>
+            <p><span class="badge">{{ report.ml_prediction }}</span></p>
+            <small>Random Forest prediction</small>
+        </div>
+
+        <div class="summary-card">
+            <h4>Noi Naadal Rule Engine</h4>
+            <p><span class="badge">{{ report.rule_prediction }}</span></p>
+            <small>Textbook keyword-based prediction</small>
+        </div>
+
+        <div class="summary-card">
+            <h4>Final Fusion</h4>
+            <p><span class="badge">{{ report.fusion_prediction }}</span></p>
+            <small>Rule {{ (report.rule_weight * 100)|int }}% + ML {{ (report.ml_weight * 100)|int }}%</small>
+        </div>
+    </div>
+
+    <h3 style="margin-top:30px;">⚖️ Fusion Probability Comparison</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>System</th>
+                <th>Vata %</th>
+                <th>Pitta %</th>
+                <th>Kapha %</th>
+                <th>Prediction</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Random Forest ML</td>
+                <td>{{ report.ml_probabilities.Vata }}</td>
+                <td>{{ report.ml_probabilities.Pitta }}</td>
+                <td>{{ report.ml_probabilities.Kapha }}</td>
+                <td><b>{{ report.ml_prediction }}</b></td>
+            </tr>
+            <tr>
+                <td>Noi Naadal Rule Engine</td>
+                <td>{{ report.rule_probabilities.Vata }}</td>
+                <td>{{ report.rule_probabilities.Pitta }}</td>
+                <td>{{ report.rule_probabilities.Kapha }}</td>
+                <td><b>{{ report.rule_prediction }}</b></td>
+            </tr>
+            <tr>
+                <td><b>Final Hybrid Fusion</b></td>
+                <td><b>{{ report.v_prob }}</b></td>
+                <td><b>{{ report.p_prob }}</b></td>
+                <td><b>{{ report.k_prob }}</b></td>
+                <td><b>{{ report.prediction }}</b></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="flex-container">
+        <div class="panel-60">
+            <h3>Final Hybrid Probability Breakdown</h3>
+
+            <label>Vata Probability:</label>
+            <div class="prob-bar-container">
+                <div class="prob-bar" style="width: {{ report.v_prob }}%; background: #0284c7;">
+                    {{ report.v_prob }}%
+                </div>
+            </div>
+
+            <label>Pitta Probability:</label>
+            <div class="prob-bar-container">
+                <div class="prob-bar" style="width: {{ report.p_prob }}%; background: #ef4444;">
+                    {{ report.p_prob }}%
+                </div>
+            </div>
+
+            <label>Kapha Probability:</label>
+            <div class="prob-bar-container">
+                <div class="prob-bar" style="width: {{ report.k_prob }}%; background: #22c55e;">
+                    {{ report.k_prob }}%
+                </div>
+            </div>
+
+            <h3 style="margin-top: 30px;">🌲 Random Forest LIME Explanation Plot</h3>
+            <img src="/static/lime_contribution_chart.png?t={{ timestamp }}"
+                 alt="LIME Chart"
+                 style="width:100%; border-radius: 8px; border: 1px solid #475569; background: white;">
+
+            <div class="note-box">
+                LIME explains only the Random Forest ML prediction, not the final hybrid fusion.
+                The final decision is produced by combining the Noi Naadal rule engine and the ML model.
+            </div>
+        </div>
+
+        <div class="panel-40">
+            <h3>Random Forest LIME Contributions</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Weight</th>
+                        <th>Impact</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for item in report.lime_data[:8] %}
+                    <tr>
+                        <td>{{ item.feature }}</td>
+                        <td>{{ item.weight }}</td>
+                        <td>{{ item.impact }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <h3 style="margin-top:30px;">📚 Noi Naadal Keyword Evidence</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Dosha</th>
+                <th>Matched Keyword</th>
+                <th>Category</th>
+                <th>Language</th>
+                <th>Weight</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for item in report.matched_keywords[:20] %}
+            <tr>
+                <td><b>{{ item.dosha }}</b></td>
+                <td>{{ item.keyword }}</td>
+                <td>{{ item.category }}</td>
+                <td>{{ item.language }}</td>
+                <td>{{ item.weight }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <h3 style="margin-top:30px;">📌 Rule Engine Score Breakdown</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Vata</th>
+                <th>Pitta</th>
+                <th>Kapha</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Core Keywords</td>
+                <td>{{ report.category_breakdown.Vata.core_keywords }}</td>
+                <td>{{ report.category_breakdown.Pitta.core_keywords }}</td>
+                <td>{{ report.category_breakdown.Kapha.core_keywords }}</td>
+            </tr>
+            <tr>
+                <td>Secondary Features</td>
+                <td>{{ report.category_breakdown.Vata.secondary_features }}</td>
+                <td>{{ report.category_breakdown.Pitta.secondary_features }}</td>
+                <td>{{ report.category_breakdown.Kapha.secondary_features }}</td>
+            </tr>
+            <tr>
+                <td>Symbolic Features</td>
+                <td>{{ report.category_breakdown.Vata.symbolic_features }}</td>
+                <td>{{ report.category_breakdown.Pitta.symbolic_features }}</td>
+                <td>{{ report.category_breakdown.Kapha.symbolic_features }}</td>
+            </tr>
+            <tr>
+                <td>Preference Features</td>
+                <td>{{ report.category_breakdown.Vata.preference_features }}</td>
+                <td>{{ report.category_breakdown.Pitta.preference_features }}</td>
+                <td>{{ report.category_breakdown.Kapha.preference_features }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3 style="margin-top: 30px;">📋 18-Feature Response Matrix</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Q.No</th>
+                <th>Feature</th>
+                <th>Patient Response</th>
+                <th>Mapped Dosha</th>
+                <th>Statement</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for item in report.table_data %}
+            <tr>
+                <td><b>{{ item.index }}</b></td>
+                <td>{{ item.feature }}</td>
+                <td><i>{{ item.response }}</i></td>
+                <td><b>{{ item.dosha }}</b></td>
+                <td>{{ item.statement }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <h3 style="margin-top: 30px;">🧠 Global Random Forest Feature Importance</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Feature</th>
+                <th>Importance Score</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for item in report.global_feature_importance[:10] %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ item.feature }}</td>
+                <td>{{ "%.4f"|format(item.importance) }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <h3 style="margin-top: 30px;">👨‍⚕️ Clinical Siddha Consultation Narrative</h3>
+    <div class="narrative-box">
+        <p id="narrative-text">{{ report.explanation }}</p>
+    </div>
+
+    <div class="note-box">
+        This system provides AI-assisted educational decision support. It is not a replacement for professional Siddha medical consultation.
+    </div>
+
+    <br>
+
+    <button onclick="window.location.href='/download_excel'"
+            class="action-btn"
+            style="background: #10b981;">
+        📥 Download Admin Excel Backup
+    </button>
+
+    <button onclick="window.location.href='/'"
+            class="action-btn"
+            style="background: #475569;">
+        Return to Consultation Room
+    </button>
+
+</div>
+
+<script>
+    function speakNarrative() {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+
+            const text = document.getElementById('narrative-text').innerText;
+            const utterance = new SpeechSynthesisUtterance(text);
+
+            utterance.lang = "{{ report.language }}";
+            utterance.rate = 0.92;
+            utterance.pitch = 1.0;
+
+            const voices = window.speechSynthesis.getVoices();
+            const regionalVoice = voices.find(
+                v => v.lang === utterance.lang ||
+                v.lang.startsWith(utterance.lang.split('-')[0])
+            );
+
+            if (regionalVoice) {
+                utterance.voice = regionalVoice;
+            }
+
+            window.speechSynthesis.speak(utterance);
+        }
+    }
+
+    if (window.speechSynthesis.onvoiceschanged !== undefined) {
+        window.speechSynthesis.onvoiceschanged = speakNarrative;
+    }
+
+    window.addEventListener('DOMContentLoaded', speakNarrative);
+</script>
+
+</body>
+</html>

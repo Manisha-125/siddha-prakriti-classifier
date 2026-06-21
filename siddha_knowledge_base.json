@@ -1,0 +1,189 @@
+{
+  "Vata": {
+    "aliases": ["Vatham", "Vaatham", "Vali", "Vazhi", "வாதம்", "வளி"],
+    "core_keywords": {
+      "weight": 1.0,
+      "english": [
+        "dry", "dryness", "rough", "thin", "lean", "light", "unstable",
+        "restless", "anxious", "fickle", "cold", "dark", "blackish",
+        "dull white", "cracked", "split", "brittle", "irregular",
+        "bony", "gas", "bloating", "fast speech", "confused speech",
+        "tearing eyes", "weak", "wind"
+      ],
+      "tamil": [
+        "வாதம்", "வளி", "வறட்சி", "வறண்ட", "உலர்ச்சி",
+        "கரடுமுரடான", "மெலிந்த", "ஒல்லி", "இலகுவான",
+        "நிலையின்மை", "அமைதியின்மை", "குளிர்ச்சி",
+        "கருமை", "கருப்பு", "வெடிப்பு", "பிளவு",
+        "உடைதல்", "ஒழுங்கின்மை", "வாயு", "வயிற்றுப்பொருமல்",
+        "வேகமான பேச்சு", "குழப்பமான பேச்சு"
+      ],
+      "malayalam": [
+        "വാതം", "വായു", "വരണ്ട", "ഉണങ്ങിയ", "പരുപരുത്ത",
+        "മെലിഞ്ഞ", "ഭാരം കുറഞ്ഞ", "അസ്ഥിരം", "അശാന്തി",
+        "തണുപ്പ്", "കറുപ്പ്", "വിള്ളൽ", "പൊട്ടൽ",
+        "അനിയമിതം", "വാതം", "വയറുവീക്കം", "വേഗത്തിലുള്ള സംസാരം"
+      ]
+    },
+    "secondary_features": {
+      "weight": 0.75,
+      "english": [
+        "thin body", "tall thin body", "very short body", "crackling joints",
+        "dry skin", "rough skin", "thin skin", "split hair",
+        "hair fall", "prominent teeth", "thick eyelids", "unstable gaze",
+        "light sleep", "half closed eyes"
+      ],
+      "tamil": [
+        "மெலிந்த உடல்", "உயரமான மெலிந்த உடல்", "குறைந்த உயரம்",
+        "மூட்டுச் சத்தம்", "வறண்ட தோல்", "கரடுமுரடான தோல்",
+        "மெல்லிய தோல்", "பிளந்த முடி", "முடி உதிர்வு",
+        "பெரிய பற்கள்", "தடித்த இமைகள்", "நிலையற்ற பார்வை",
+        "லேசான தூக்கம்", "பாதி மூடிய கண்கள்"
+      ],
+      "malayalam": [
+        "മെലിഞ്ഞ ശരീരം", "ഉയരമുള്ള മെലിഞ്ഞ ശരീരം", "കുറഞ്ഞ ഉയരം",
+        "സന്ധി ശബ്ദം", "വരണ്ട ചർമ്മം", "പരുപരുത്ത ചർമ്മം",
+        "മെലിഞ്ഞ ചർമ്മം", "പിളർന്ന മുടി", "മുടി കൊഴിച്ചിൽ",
+        "വലിയ പല്ലുകൾ", "കട്ടിയുള്ള കൺപോളകൾ", "അസ്ഥിരമായ നോട്ടം",
+        "ലഘു ഉറക്കം"
+      ]
+    },
+    "symbolic_features": {
+      "weight": 0.5,
+      "english": ["sky", "mountain", "forest", "flying", "walking in air", "wind dream"],
+      "tamil": ["விண்", "மலை", "காடு", "பறத்தல்", "காற்று கனவு"],
+      "malayalam": ["ആകാശം", "മല", "കാട്", "പറക്കൽ", "കാറ്റ് സ്വപ്നം"]
+    },
+    "preference_features": {
+      "weight": 0.5,
+      "english": ["likes warmth", "dislikes cold", "dislikes wind", "likes massage", "likes music"],
+      "tamil": ["வெப்பம் விருப்பம்", "குளிர் வெறுப்பு", "காற்று வெறுப்பு", "தொக்கணம் விருப்பம்", "இசை விருப்பம்"],
+      "malayalam": ["ചൂട് ഇഷ്ടം", "തണുപ്പ് ഇഷ്ടമില്ല", "കാറ്റ് ഇഷ്ടമില്ല", "മസാജ് ഇഷ്ടം", "സംഗീതം ഇഷ്ടം"]
+    }
+  },
+
+  "Pitta": {
+    "aliases": ["Pitham", "Pitta", "Azhal", "அழல்", "பித்தம்"],
+    "core_keywords": {
+      "weight": 1.0,
+      "english": [
+        "heat", "hot", "warm", "sharp", "bravery", "anger", "irritable",
+        "reddish", "yellowish", "sweating", "acne", "moles",
+        "thirst", "hunger", "strong appetite", "burning", "inflammation",
+        "clear intelligence", "authoritative", "commanding voice"
+      ],
+      "tamil": [
+        "பித்தம்", "அழல்", "வெப்பம்", "சூடு", "கூர்மை",
+        "வீரம்", "கோபம்", "எரிச்சல்", "சிவப்பு", "மஞ்சள்",
+        "வியர்வை", "முகப்பரு", "மச்சம்", "தாகம்",
+        "பசி", "எரிவு", "அழற்சி", "தெளிந்த அறிவு",
+        "உயர்ந்த ஒலி"
+      ],
+      "malayalam": [
+        "പിത്തം", "ചൂട്", "ഉഷ്ണം", "മൂർച്ച", "ധൈര്യം",
+        "കോപം", "ചുവപ്പ്", "മഞ്ഞ", "വിയർപ്പ്",
+        "മുഖക്കുരു", "മച്ചം", "ദാഹം", "വിശപ്പ്",
+        "കത്തൽ", "വീക്കം", "തെളിഞ്ഞ ബുദ്ധി", "ആജ്ഞാപക ശബ്ദം"
+      ]
+    },
+    "secondary_features": {
+      "weight": 0.75,
+      "english": [
+        "moderate build", "lean build", "less muscle over joints",
+        "reddish eyes", "yellowish eyes", "sun sensitive eyes",
+        "early greying", "hair thinning", "balding", "wrinkled skin",
+        "rapid digestion", "less sleep"
+      ],
+      "tamil": [
+        "நடுத்தர உடல்", "மெலிந்த உடல்", "மூட்டுகளில் குறைந்த தசை",
+        "சிவந்த கண்கள்", "மஞ்சள் கண்கள்", "சூரிய வெப்பத்தில் கண் சிவத்தல்",
+        "இளநரை", "முடி மெலிதல்", "வழுக்கை", "சுருங்கிய தோல்",
+        "வேகமான செரிமானம்", "குறைந்த தூக்கம்"
+      ],
+      "malayalam": [
+        "മിതമായ ശരീരം", "മെലിഞ്ഞ ശരീരം", "കുറഞ്ഞ പേശി",
+        "ചുവന്ന കണ്ണുകൾ", "മഞ്ഞ നിറമുള്ള കണ്ണുകൾ",
+        "സൂര്യപ്രകാശത്തിൽ കണ്ണ് ചുവക്കൽ", "നര", "മുടി മെലിഞ്ഞത്",
+        "മുടികൊഴിച്ചിൽ", "ചുളിവുള്ള ചർമ്മം", "വേഗത്തിലുള്ള ദഹനം",
+        "കുറഞ്ഞ ഉറക്കം"
+      ]
+    },
+    "symbolic_features": {
+      "weight": 0.5,
+      "english": ["fire", "sun", "lightning", "torch", "bright light", "burning dream"],
+      "tamil": ["நெருப்பு", "சூரியன்", "மின்னல்", "கொள்ளி", "வெளிச்சம்", "எரியும் கனவு"],
+      "malayalam": ["തീ", "സൂര്യൻ", "മിന്നൽ", "പ്രകാശം", "കത്തുന്ന സ്വപ്നം"]
+    },
+    "preference_features": {
+      "weight": 0.5,
+      "english": ["likes cool", "likes fragrance", "likes sandalwood", "dislikes heat", "dislikes sun"],
+      "tamil": ["குளிர்ச்சி விருப்பம்", "நறுமணம் விருப்பம்", "சந்தனம் விருப்பம்", "வெப்பம் வெறுப்பு", "சூரியன் வெறுப்பு"],
+      "malayalam": ["തണുപ്പ് ഇഷ്ടം", "സുഗന്ധം ഇഷ്ടം", "ചന്ദനം ഇഷ്ടം", "ചൂട് ഇഷ്ടമില്ല", "സൂര്യപ്രകാശം ഇഷ്ടമില്ല"]
+    }
+  },
+
+  "Kapha": {
+    "aliases": ["Kabam", "Kapha", "Aiyam", "ஐயம்", "கபம்"],
+    "core_keywords": {
+      "weight": 1.0,
+      "english": [
+        "stable", "stability", "patient", "patience", "heavy",
+        "heaviness", "oily", "unctuous", "smooth", "soft",
+        "fair", "white", "broad", "strong", "calm", "slow",
+        "loyal", "gratitude", "modest", "deep voice", "low tone",
+        "slow digestion", "sound sleep", "deep sleep"
+      ],
+      "tamil": [
+        "கபம்", "ஐயம்", "நிலைத்தன்மை", "பொறுமை",
+        "பருமன்", "கனம்", "எண்ணெய்த்தன்மை", "நெய்ப்பு",
+        "மென்மை", "மிருதுவான", "வெண்மை", "அகலம்",
+        "வலிமை", "அமைதி", "மெதுவான", "நன்றி",
+        "நட்பு", "பணிவு", "ஆழ்ந்த குரல்",
+        "மந்த செரிமானம்", "ஆழ்ந்த தூக்கம்"
+      ],
+      "malayalam": [
+        "കഫം", "ഐയം", "സ്ഥിരത", "ക്ഷമ", "ഭാരം",
+        "എണ്ണമയം", "മിനുസം", "മൃദുവായ", "വെളുപ്പ്",
+        "വീതിയുള്ള", "ശക്തി", "ശാന്തം", "മന്ദം",
+        "നന്ദി", "സൗഹൃദം", "വിനയം", "ആഴമുള്ള ശബ്ദം",
+        "മന്ദ ദഹനം", "ഗാഢനിദ്ര"
+      ]
+    },
+    "secondary_features": {
+      "weight": 0.75,
+      "english": [
+        "well built body", "heavy body", "symmetrical body",
+        "broad chest", "wide forehead", "long arms",
+        "large eyes", "thick lashes", "curly hair", "oily hair",
+        "majestic walk", "elephant gait", "low appetite",
+        "moderate appetite"
+      ],
+      "tamil": [
+        "நன்றாக கட்டிய உடல்", "கனமான உடல்", "சமமான உடல்",
+        "அகன்ற மார்பு", "பரந்த நெற்றி", "நீண்ட கைகள்",
+        "பெரிய கண்கள்", "தடித்த இமைகள்", "சுருள் முடி",
+        "எண்ணெய் முடி", "யானை நடை", "குறைந்த பசி",
+        "மிதமான பசி"
+      ],
+      "malayalam": [
+        "നന്നായി നിർമ്മിത ശരീരം", "ഭാരമുള്ള ശരീരം", "സമമായ ശരീരം",
+        "വീതിയുള്ള നെഞ്ച്", "വീതിയുള്ള നെറ്റി", "നീണ്ട കൈകൾ",
+        "വലിയ കണ്ണുകൾ", "കട്ടിയുള്ള കൺപീലികൾ", "ചുരുണ്ട മുടി",
+        "എണ്ണമയമുള്ള മുടി", "ആനനട", "കുറഞ്ഞ വിശപ്പ്",
+        "മിതമായ വിശപ്പ്"
+      ]
+    },
+    "symbolic_features": {
+      "weight": 0.5,
+      "english": ["water", "pond", "lotus", "birds", "cloud", "rain", "cool cloud"],
+      "tamil": ["நீர்", "குளம்", "தாமரை", "பறவைகள்", "முகில்", "மழை", "குளிர்ந்த முகில்"],
+      "malayalam": ["വെള്ളം", "കുളം", "താമര", "പക്ഷികൾ", "മേഘം", "മഴ", "തണുത്ത മേഘം"]
+    },
+    "preference_features": {
+      "weight": 0.5,
+      "english": ["likes dryness", "likes warmth", "dislikes water", "dislikes dampness", "dislikes humidity"],
+      "tamil": ["வறட்சி விருப்பம்", "வெப்பம் விருப்பம்", "நீர் வெறுப்பு", "ஈரம் வெறுப்பு", "ஈரப்பதம் வெறுப்பு"],
+      "malayalam": ["വരണ്ട കാലാവസ്ഥ ഇഷ്ടം", "ചൂട് ഇഷ്ടം", "വെള്ളം ഇഷ്ടമില്ല", "ഈർപ്പം ഇഷ്ടമില്ല"]
+    }
+  }
+}

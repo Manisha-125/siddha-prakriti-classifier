@@ -1,0 +1,4 @@
+Model,Accuracy,Balanced_Accuracy,Macro_Precision,Macro_Recall,Macro_F1,Weighted_Precision,Weighted_Recall,Weighted_F1,Specificity
+Random Forest,0.9091,0.8056,0.9608,0.8056,0.8649,0.9198,0.9091,0.9041,0.9048
+Extra Trees,0.9091,0.7778,0.9608,0.7778,0.8125,0.9198,0.9091,0.8892,0.9048
+SVM,0.7273,0.4167,0.5714,0.4167,0.4111,0.6688,0.7273,0.6409,0.7143

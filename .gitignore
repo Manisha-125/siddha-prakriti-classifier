@@ -1,0 +1,6 @@
+credentials.json
+__pycache__/
+*.pyc
+.env
+static/speech_prompt.mp3
+static/patient_report.pdf

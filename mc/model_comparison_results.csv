@@ -1,0 +1,4 @@
+Model,Accuracy,Precision,Recall,Sensitivity,Specificity,F1_Score
+Random Forest,0.8636,0.8864,0.8636,0.8636,0.8571,0.8439
+Extra Trees,0.8636,0.8864,0.8636,0.8636,0.8571,0.8439
+SVM,0.7273,0.6688,0.7273,0.7273,0.7143,0.6409

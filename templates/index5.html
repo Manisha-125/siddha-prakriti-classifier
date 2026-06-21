@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siddha Multilingual AI Engine</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+
+    <style>
+        body {
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 20px;
+            font-family: system-ui, sans-serif;
+        }
+
+        .card {
+            border: 1px solid #ccc;
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .active-mic {
+            background-color: #ff4d4d !important;
+            color: white;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .mcq-btn {
+            padding: 12px;
+            font-size: 1em;
+            text-align: left;
+            background: #f0f4f8;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            cursor: pointer;
+            color: #1e293b;
+        }
+
+        .mcq-btn:hover {
+            background: #e2e8f0;
+            transform: translateX(4px);
+        }
+
+        .status-text {
+            color: #64748b;
+            font-style: italic;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>🌿 Siddha Prakriti Multilingual Assistant</h1>
+    <p>Voice & Click Interface with Gemini Mapping and XAI Analytics</p>
+    <hr>
+
+    <div id="setup-card" class="card">
+        <h3>📋 Patient Intake & Language Setup</h3>
+
+        <label>Full Name / பெயர்:</label>
+        <input type="text" id="patient-name" placeholder="Enter patient name" required>
+
+        <div style="display: flex; gap: 15px;">
+            <div style="flex: 1;">
+                <label>Age / வயது:</label>
+                <input type="number" id="patient-age" placeholder="Age" min="1">
+            </div>
+
+            <div style="flex: 1;">
+                <label>Gender / பாலினம்:</label>
+                <select id="patient-gender">
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+        </div>
+
+        <label>Location / ஊர்:</label>
+        <input type="text" id="patient-location" placeholder="City / Town Name">
+
+        <h3>Select Preferred Diagnostic Language:</h3>
+        <select id="lang-selector" style="font-size: 1.1em;">
+            <option value="en-US">English</option>
+            <option value="ta-IN">தமிழ் (Tamil)</option>
+            <option value="ml-IN">മലയാളം (Malayalam)</option>
+        </select>
+
+        <br><br>
+
+        <button id="start-btn" onclick="startSession()" style="width: 100%;">
+            Begin Diagnostic Evaluation
+        </button>
+    </div>
+
+    <div id="interview-card" class="card hidden">
+        <h3 id="question-number">Question 1 of 18</h3>
+
+        <p id="feature-name" style="color:#2563eb; font-weight:bold;"></p>
+
+        <p id="question-prompt" style="font-size: 1.25em; font-weight: bold;"></p>
+
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <button id="mic-btn" onclick="toggleListening()">
+                🎙️ Speak / பேசுக / സംസാരിക്കുക
+            </button>
+
+            <p id="speech-preview" class="status-text"></p>
+        </div>
+
+        <div id="options-box" class="options-container"></div>
+
+        <p id="processing-status" class="status-text"></p>
+    </div>
+
+    <audio id="global-audio-player" style="display: none;"></audio>
+
+    <script>
+        const localizedDataset = {
+            "en-US": [
+                {
+                    feature: "Eyes",
+                    prompt: "What is the nature of your eyes?",
+                    options: [
+                        "Grey or blackish, active, unsteady, dry",
+                        "Yellow to red, sharp",
+                        "White, calm, steady, moist"
+                    ]
+                },
+                {
+                    feature: "Nose",
+                    prompt: "What best describes your nose?",
+                    options: [
+                        "Thin, long, narrow, slightly bent",
+                        "Medium, sharp, pointed, reddish tip",
+                        "Broad, round, well-shaped, moist"
+                    ]
+                },
+                {
+                    feature: "Tongue",
+                    prompt: "What is the texture of your tongue?",
+                    options: [
+                        "Black, dry, or rough",
+                        "Reddish and dry",
+                        "Pale with increased salivation"
+                    ]
+                },
+                {
+                    feature: "Ears",
+                    prompt: "What is the nature of your ears?",
+                    options: [
+                        "Small, dry, cool, irregular",
+                        "Medium, warm, reddish",
+                        "Large, thick, fleshy"
+                    ]
+                },
+                {
+                    feature: "Skin",
+                    prompt: "What is the nature of your skin?",
+                    options: [
+                        "Dry, hard, cool",
+                        "Wrinkled, sensitive, warm",
+                        "Smooth, soft, oily, cool"
+                    ]
+                },
+                {
+                    feature: "Nails",
+                    prompt: "What is the nature of your nails?",
+                    options: [
+                        "Cracked, brittle, hang nails",
+                        "Red nail bed with bends",
+                        "Thick and strong"
+                    ]
+                },
+                {
+                    feature: "Hair",
+                    prompt: "What is the nature of your hair?",
+                    options: [
+                        "Grey, split, dry",
+                        "Yellow to red, sharp",
+                        "Long, thick, waxy"
+                    ]
+                },
+                {
+                    feature: "Facial Structure",
+                    prompt: "What best describes your facial structure?",
+                    options: [
+                        "Thin angular face",
+                        "Sharp facial features",
+                        "Round full face"
+                    ]
+                },
+                {
+                    feature: "Lips",
+                    prompt: "What is the nature of your lips?",
+                    options: [
+                        "Dry, thin, blackish",
+                        "Soft, moist, reddish",
+                        "Thick and glossy"
+                    ]
+                },
+                {
+                    feature: "Jawline",
+                    prompt: "What best describes your jawline?",
+                    options: [
+                        "Narrow or weak",
+                        "Sharp and well-defined",
+                        "Broad and rounded"
+                    ]
+                },
+                {
+                    feature: "Cheeks",
+                    prompt: "What best describes your cheeks?",
+                    options: [
+                        "Sunken or hollow",
+                        "Medium, slightly reddish",
+                        "Full, plump and smooth"
+                    ]
+                },
+                {
+                    feature: "Neck",
+                    prompt: "What is the nature of your neck?",
+                    options: [
+                        "Thin, long, dry",
+                        "Medium, muscular",
+                        "Thick and strong"
+                    ]
+                },
+                {
+                    feature: "Shoulders",
+                    prompt: "What best describes your shoulders?",
+                    options: [
+                        "Narrow and bony",
+                        "Moderately developed",
+                        "Broad and rounded"
+                    ]
+                },
+                {
+                    feature: "Chest",
+                    prompt: "What best describes your chest or body build?",
+                    options: [
+                        "Thin and flat",
+                        "Moderate build",
+                        "Broad and full"
+                    ]
+                },
+                {
+                    feature: "Arms",
+                    prompt: "What best describes your arms?",
+                    options: [
+                        "Thin and long",
+                        "Medium and defined",
+                        "Strong and thick"
+                    ]
+                },
+                {
+                    feature: "Hands",
+                    prompt: "What best describes your hands and fingers?",
+                    options: [
+                        "Long tapering fingers",
+                        "Medium length",
+                        "Short thick fingers"
+                    ]
+                },
+                {
+                    feature: "Legs",
+                    prompt: "What best describes your legs or body frame?",
+                    options: [
+                        "Thin, difficulty gaining weight",
+                        "Medium build",
+                        "Heavy build, gains weight easily"
+                    ]
+                },
+                {
+                    feature: "Feet",
+                    prompt: "What best describes your feet?",
+                    options: [
+                        "Narrow, dry, cracked",
+                        "Medium, warm, well-shaped",
+                        "Large, thick, soft"
+                    ]
+                }
+            ],
+
+            "ta-IN": [
+                {
+                    feature: "Eyes",
+                    prompt: "உங்கள் கண்களின் இயல்பு எப்படி உள்ளது?",
+                    options: [
+                        "சாம்பல் அல்லது கருமை நிறம், சுறுசுறுப்பு, நிலை இல்லாத, வறண்ட கண்கள்",
+                        "மஞ்சள் முதல் சிவப்பு நிறம், கூர்மையான பார்வை",
+                        "வெள்ளை, அமைதியான, நிலையான, ஈரப்பதமான கண்கள்"
+                    ]
+                },
+                {
+                    feature: "Nose",
+                    prompt: "உங்கள் மூக்கின் அமைப்பு எப்படியுள்ளது?",
+                    options: [
+                        "மெல்லிய, நீளமான, குறுகிய, சற்று வளைந்த மூக்கு",
+                        "நடுத்தர, கூர்மையான, சிவப்பு நுனியுடன் கூடிய மூக்கு",
+                        "அகன்ற, வட்டமான, நன்றாக அமைந்த, ஈரப்பதமான மூக்கு"
+                    ]
+                },
+                {
+                    feature: "Tongue",
+                    prompt: "உங்கள் நாக்கின் மேற்பரப்பு மற்றும் தோற்றம் எப்படுள்ளது?",
+                    options: [
+                        "கருமை, வறண்ட அல்லது சொரசொரப்பான நாக்கு",
+                        "சிவப்பு நிறம் மற்றும் வறண்ட தன்மை",
+                        "வெளிறிய நிறம் மற்றும் அதிக உமிழ்நீர்"
+                    ]
+                },
+                {
+                    feature: "Ears",
+                    prompt: "உங்கள் காதுகளின் இயல்பு எப்படி உள்ளது?",
+                    options: [
+                        "சிறிய, வறண்ட, குளிர்ந்த, ஒழுங்கற்ற வடிவம்",
+                        "நடுத்தர, வெப்பமான, சிவப்பு நிறம்",
+                        "பெரிய, தடிமனான, சதைப்பற்றுள்ள காதுகள்"
+                    ]
+                },
+                {
+                    feature: "Skin",
+                    prompt: "உங்கள் தோலின் இயல்பு எப்படி உள்ளது?",
+                    options: [
+                        "வறண்ட, கடினமான, குளிர்ந்த தோல்",
+                        "சுருக்கம், உணர்திறன், வெப்பமான தோல்",
+                        "மென்மையான, எண்ணெய் பசையுள்ள, குளிர்ந்த தோல்"
+                    ]
+                },
+                {
+                    feature: "Nails",
+                    prompt: "உங்கள் நகங்களின் இயல்பு எப்படி உள்ளது?",
+                    options: [
+                        "வெடிப்பு, எளிதில் உடையும், வறண்ட நகங்கள்",
+                        "சிவப்பு நக அடிப்பகுதி, வளைவு காணப்படும்",
+                        "தடிமனான மற்றும் வலுவான நகங்கள்"
+                    ]
+                },
+                {
+                    feature: "Hair",
+                    prompt: "உங்கள் முடியின் இயல்பு எப்படி உள்ளது?",
+                    options: [
+                        "சாம்பல், பிளவுபட்ட, வறண்ட முடி",
+                        "மஞ்சள் முதல் சிவப்பு நிறம், கூர்மையான தன்மை",
+                        "நீளமான, தடிமனான, மெழுகுபோன்ற முடி"
+                    ]
+                },
+                {
+                    feature: "Facial Structure",
+                    prompt: "உங்கள் முக அமைப்பு எப்படியுள்ளது?",
+                    options: [
+                        "மெல்லிய மற்றும் கோணலான முகம்",
+                        "கூர்மையான முக அமைப்பு",
+                        "வட்டமான மற்றும் நிறைவான முகம்"
+                    ]
+                },
+                {
+                    feature: "Lips",
+                    prompt: "உங்கள் உதடுகளின் இயல்பு எப்படி உள்ளது?",
+                    options: [
+                        "வறண்ட, மெல்லிய, கருமையான உதடுகள்",
+                        "மென்மையான, ஈரப்பதமான, சிவப்பு உதடுகள்",
+                        "தடிமனான மற்றும் பளபளப்பான உதடுகள்"
+                    ]
+                },
+                {
+                    feature: "Jawline",
+                    prompt: "உங்கள் தாடை வரி எப்படியுள்ளது?",
+                    options: [
+                        "குறுகிய அல்லது பலவீனமான தாடை",
+                        "கூர்மையான மற்றும் தெளிவான தாடை",
+                        "அகன்ற மற்றும் வட்டமான தாடை"
+                    ]
+                },
+                {
+                    feature: "Cheeks",
+                    prompt: "உங்கள் கன்னங்களின் அமைப்பு எப்படுள்ளது?",
+                    options: [
+                        "ஒட்டிய அல்லது குழி விழுந்த கன்னங்கள்",
+                        "நடுத்தர, சில நேரங்களில் சிவந்த கன்னங்கள்",
+                        "முழுமையான, உப்பலான, மென்மையான கன்னங்கள்"
+                    ]
+                },
+                {
+                    feature: "Neck",
+                    prompt: "உங்கள் கழுத்தின் இயல்பு எப்படி உள்ளது?",
+                    options: [
+                        "மெல்லிய, நீளமான, வறண்ட கழுத்து",
+                        "நடுத்தர, தசைப்பிடிப்புள்ள கழுத்து",
+                        "தடிமனான மற்றும் வலுவான கழுத்து"
+                    ]
+                },
+                {
+                    feature: "Shoulders",
+                    prompt: "உங்கள் தோள்களின் அமைப்பு எப்படுள்ளது?",
+                    options: [
+                        "குறுகிய மற்றும் எலும்புகள் தெரியும் தோள்கள்",
+                        "நடுத்தரமாக வளர்ந்த தோள்கள்",
+                        "அகன்ற மற்றும் வட்டமான தோள்கள்"
+                    ]
+                },
+                {
+                    feature: "Chest",
+                    prompt: "உங்கள் மார்பு அல்லது உடல் கட்டமைப்பு எப்படி உள்ளது?",
+                    options: [
+                        "மெல்லிய மற்றும் தட்டையான மார்பு",
+                        "நடுத்தர உடல் கட்டமைப்பு",
+                        "அகன்ற மற்றும் நிறைவான மார்பு"
+                    ]
+                },
+                {
+                    feature: "Arms",
+                    prompt: "உங்கள் கைகளின் அமைப்பு எப்படி உள்ளது?",
+                    options: [
+                        "மெல்லிய மற்றும் நீளமான கைகள்",
+                        "நடுத்தர மற்றும் தெளிவான கைகள்",
+                        "வலுவான மற்றும் தடிமனான கைகள்"
+                    ]
+                },
+                {
+                    feature: "Hands",
+                    prompt: "உங்கள் கைகள் மற்றும் விரல்கள் எப்படி உள்ளன?",
+                    options: [
+                        "நீளமான, மெல்லிய விரல்கள்",
+                        "நடுத்தர நீள விரல்கள்",
+                        "குறுகிய, தடிமனான விரல்கள்"
+                    ]
+                },
+                {
+                    feature: "Legs",
+                    prompt: "உங்கள் கால்கள் அல்லது உடல் கட்டமைப்பு எப்படியுள்ளது?",
+                    options: [
+                        "மெல்லிய, உடல் எடை அதிகரிக்க சிரமம்",
+                        "நடுத்தர கட்டமைப்பு",
+                        "கனமான கட்டமைப்பு, எடை எளிதில் அதிகரிக்கும்"
+                    ]
+                },
+                {
+                    feature: "Feet",
+                    prompt: "உங்கள் பாதங்களின் அமைப்பு எப்படியுள்ளது?",
+                    options: [
+                        "குறுகிய, வறண்ட, வெடிப்பு காணப்படும் பாதங்கள்",
+                        "நடுத்தர, வெப்பமான, நல்ல வடிவமைப்பு கொண்ட பாதங்கள்",
+                        "பெரிய, தடிமனான, மென்மையான பாதங்கள்"
+                    ]
+                }
+            ],
+
+            "ml-IN": [
+                {
+                    feature: "Eyes",
+                    prompt: "നിങ്ങളുടെ കണ്ണുകളുടെ സ്വഭാവം എങ്ങനെയാണ്?",
+                    options: [
+                        "ചാരനിറം അല്ലെങ്കിൽ കറുപ്പ്, സജീവം, അസ്ഥിരം, വരണ്ടത്",
+                        "മഞ്ഞ മുതൽ ചുവപ്പ് നിറം, മൂർച്ചയുള്ള ദൃഷ്ടി",
+                        "വെളുത്തത്, ശാന്തം, സ്ഥിരതയുള്ളത്, ഈർപ്പമുള്ളത്"
+                    ]
+                },
+                {
+                    feature: "Nose",
+                    prompt: "നിങ്ങളുടെ മൂക്കിന്റെ ഘടന എങ്ങനെയാണ്?",
+                    options: [
+                        "മെലിഞ്ഞത്, നീളം, ഇടുങ്ങിയത്, അല്പം വളഞ്ഞത്",
+                        "മിതമായ വലുപ്പം, മൂർച്ചയുള്ളത്, ചുവന്ന അറ്റം",
+                        "വീതിയേറിയത്, വൃത്താകാരം, നല്ല ആകൃതി, ഈർപ്പമുള്ളത്"
+                    ]
+                },
+                {
+                    feature: "Tongue",
+                    prompt: "നിങ്ങളുടെ നാവിന്റെ രൂപവും ഉപരിതലവും എങ്ങനെയാണ്?",
+                    options: [
+                        "കറുപ്പ്, വരണ്ടത്, പരുപരുത്തത്",
+                        "ചുവപ്പ് നിറവും വരണ്ട സ്വഭാവവും",
+                        "വെളുത്ത നിറം, കൂടുതൽ ഉമിനീർ"
+                    ]
+                },
+                {
+                    feature: "Ears",
+                    prompt: "നിങ്ങളുടെ ചെവികളുടെ സ്വഭാവം എങ്ങനെയാണ്?",
+                    options: [
+                        "ചെറുത്, വരണ്ടത്, തണുപ്പ്, അസമമായ ആകൃതി",
+                        "മിത വലുപ്പം, ചൂട്, ചുവപ്പ് നിറം",
+                        "വലുത്, തടിച്ചത്, മാംസളമായത്"
+                    ]
+                },
+                {
+                    feature: "Skin",
+                    prompt: "നിങ്ങളുടെ ചർമ്മത്തിന്റെ സ്വഭാവം എങ്ങനെയാണ്?",
+                    options: [
+                        "വരണ്ടത്, കടുപ്പമുള്ളത്, തണുപ്പ്",
+                        "ചുളിവുള്ളത്, സംവേദനക്ഷമം, ചൂട്",
+                        "മിനുസമുള്ളത്, മൃദുവായത്, എണ്ണമയമുള്ളത്, തണുപ്പ്"
+                    ]
+                },
+                {
+                    feature: "Nails",
+                    prompt: "നിങ്ങളുടെ നഖങ്ങളുടെ സ്വഭാവം എങ്ങനെയാണ്?",
+                    options: [
+                        "വിള്ളിയ, എളുപ്പത്തിൽ ഒടിയുന്ന, വരണ്ട നഖങ്ങൾ",
+                        "ചുവന്ന നഖപ്പടി, വളവുകൾ കാണാം",
+                        "തടിച്ചതും ശക്തവുമായ നഖങ്ങൾ"
+                    ]
+                },
+                {
+                    feature: "Hair",
+                    prompt: "നിങ്ങളുടെ മുടിയുടെ സ്വഭാവം എങ്ങനെയാണ്?",
+                    options: [
+                        "ചാരനിറം, പിളർന്ന, വരണ്ട മുടി",
+                        "മഞ്ഞ മുതൽ ചുവപ്പ് നിറം, മൂർച്ചയുള്ള സ്വഭാവം",
+                        "നീളം, കട്ടിയുള്ളത്, മെഴുകുപോലുള്ള മുടി"
+                    ]
+                },
+                {
+                    feature: "Facial Structure",
+                    prompt: "നിങ്ങളുടെ മുഖഘടന എങ്ങനെയാണ്?",
+                    options: [
+                        "മെലിഞ്ഞ, കോണുകളുള്ള മുഖം",
+                        "മൂർച്ചയുള്ള മുഖഭാവങ്ങൾ",
+                        "വട്ടവും നിറഞ്ഞതുമായ മുഖം"
+                    ]
+                },
+                {
+                    feature: "Lips",
+                    prompt: "നിങ്ങളുടെ അധരങ്ങളുടെ സ്വഭാവം എങ്ങനെയാണ്?",
+                    options: [
+                        "വരണ്ട, മെലിഞ്ഞ, ഇരുണ്ട അധരങ്ങൾ",
+                        "മൃദുവായ, ഈർപ്പമുള്ള, ചുവന്ന അധരങ്ങൾ",
+                        "തടിച്ചും തിളക്കമുള്ളതുമായ അധരങ്ങൾ"
+                    ]
+                },
+                {
+                    feature: "Jawline",
+                    prompt: "നിങ്ങളുടെ താടി രേഖ എങ്ങനെയാണ്?",
+                    options: [
+                        "ഇടുങ്ങിയ അല്ലെങ്കിൽ ദുർബലമായ താടി",
+                        "മൂർച്ചയുള്ള, വ്യക്തമായ താടി രേഖ",
+                        "വീതിയേറിയ, വട്ടത്തിലുള്ള താടി"
+                    ]
+                },
+                {
+                    feature: "Cheeks",
+                    prompt: "നിങ്ങളുടെ കവിളുകളുടെ ഘടന എങ്ങനെയാണ്?",
+                    options: [
+                        "കുഴിഞ്ഞ അല്ലെങ്കിൽ അസ്ഥികൾ തെളിയുന്ന കവിളുകൾ",
+                        "മിതമായ, ചിലപ്പോൾ ചുവപ്പ് നിറം",
+                        "നിറഞ്ഞ, മൃദുവായ കവിളുകൾ"
+                    ]
+                },
+                {
+                    feature: "Neck",
+                    prompt: "നിങ്ങളുടെ കഴുത്തിന്റെ സ്വഭാവം എങ്ങനെയാണ്?",
+                    options: [
+                        "മെലിഞ്ഞ, നീളം, വരണ്ട കഴുത്ത്",
+                        "മിതമായ, പേശിയുള്ള കഴുത്ത്",
+                        "തടിച്ചും ശക്തവുമായ കഴുത്ത്"
+                    ]
+                },
+                {
+                    feature: "Shoulders",
+                    prompt: "നിങ്ങളുടെ ചുമലുകളുടെ ഘടന എങ്ങനെയാണ്?",
+                    options: [
+                        "ഇടുങ്ങിയ, അസ്ഥികൾ തെളിയുന്ന ചുമലുകൾ",
+                        "മിതമായി വികസിച്ച ചുമലുകൾ",
+                        "വീതിയേറിയ, വട്ടത്തിലുള്ള ചുമലുകൾ"
+                    ]
+                },
+                {
+                    feature: "Chest",
+                    prompt: "നിങ്ങളുടെ നെഞ്ച് അല്ലെങ്കിൽ ശരീരഘടന എങ്ങനെയാണ്?",
+                    options: [
+                        "മെലിഞ്ഞ, സമതലമായ നെഞ്ച്",
+                        "മിതമായ ശരീരഘടന",
+                        "വീതിയേറിയ, നിറഞ്ഞ നെഞ്ച്"
+                    ]
+                },
+                {
+                    feature: "Arms",
+                    prompt: "നിങ്ങളുടെ കൈകളുടെ ഘടന എങ്ങനെയാണ്?",
+                    options: [
+                        "മെലിഞ്ഞ, നീളമുള്ള കൈകൾ",
+                        "മിതമായ, വ്യക്തമായ കൈകൾ",
+                        "ശക്തവും തടിച്ചതുമായ കൈകൾ"
+                    ]
+                },
+                {
+                    feature: "Hands",
+                    prompt: "നിങ്ങളുടെ കൈകളും വിരലുകളും എങ്ങനെയാണ്?",
+                    options: [
+                        "നീളമുള്ള, മെലിഞ്ഞ വിരലുകൾ",
+                        "മിതമായ നീളമുള്ള വിരലുകൾ",
+                        "ചെറുതും തടിച്ചും ഉള്ള വിരലുകൾ"
+                    ]
+                },
+                {
+                    feature: "Legs",
+                    prompt: "നിങ്ങളുടെ കാലുകൾ അല്ലെങ്കിൽ ശരീരഘടന എങ്ങനെയാണ്?",
+                    options: [
+                        "മെലിഞ്ഞത്, ഭാരം കൂടാൻ ബുദ്ധിമുട്ട്",
+                        "മിതമായ ശരീരഘടന",
+                        "ഭാരമുള്ള ഘടന, എളുപ്പത്തിൽ ഭാരം കൂടും"
+                    ]
+                },
+                {
+                    feature: "Feet",
+                    prompt: "നിങ്ങളുടെ പാദങ്ങളുടെ ഘടന എങ്ങനെയാണ്?",
+                    options: [
+                        "ഇടുങ്ങിയ, വരണ്ട, വിള്ളലുള്ള പാദങ്ങൾ",
+                        "മിതമായ, ചൂടുള്ള, നല്ല ആകൃതിയുള്ള പാദങ്ങൾ",
+                        "വലുത്, തടിച്ചത്, മൃദുവായ പാദങ്ങൾ"
+                    ]
+                }
+            ]
+        };
+
+        let currentStep = 0;
+        let selectedLang = "en-US";
+        let questions = [];
+        let mappedAnswers = [];
+        let demographicProfile = {};
+        let recognition;
+        let isListening = false;
+
+        function startSession() {
+            const name = document.getElementById("patient-name").value.trim();
+
+            if (!name) {
+                alert("Please input patient name.");
+                return;
+            }
+
+            demographicProfile = {
+                name: name,
+                age: document.getElementById("patient-age").value || "N/A",
+                gender: document.getElementById("patient-gender").value,
+                location: document.getElementById("patient-location").value || "N/A"
+            };
+
+            currentStep = 0;
+            mappedAnswers = [];
+
+            selectedLang = document.getElementById("lang-selector").value;
+            questions = localizedDataset[selectedLang];
+
+            document.getElementById("setup-card").classList.add("hidden");
+            document.getElementById("interview-card").classList.remove("hidden");
+
+            setupSpeechRecognition();
+
+            loadQuestion();
+        }
+
+        function setupSpeechRecognition() {
+            if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.lang = selectedLang;
+
+                recognition.onresult = async function(event) {
+                    const transcript = event.results[0][0].transcript;
+
+                    document.getElementById("speech-preview").innerText =
+                        `Heard: "${transcript}"`;
+
+                    stopMicUI();
+
+                    await processAnswer(
+                        transcript,
+                        "speech_or_text",
+                        ""
+                    );
+                };
+
+                recognition.onerror = function(event) {
+                    stopMicUI();
+                    document.getElementById("speech-preview").innerText =
+                        "Speech recognition error. Please try again or click an option.";
+                };
+
+                recognition.onend = function() {
+                    stopMicUI();
+                };
+            } else {
+                document.getElementById("mic-btn").disabled = true;
+                document.getElementById("mic-btn").innerText =
+                    "Speech not supported in this browser";
+            }
+        }
+
+        async function triggerBackendVoice(textToSpeak) {
+            const res = await fetch("/speak_prompt", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    text: textToSpeak,
+                    language: selectedLang
+                })
+            });
+
+            const data = await res.json();
+
+            if (data.success) {
+                const player = document.getElementById("global-audio-player");
+                player.src = data.audio_url;
+                player.play().catch(e => console.log(e));
+            }
+        }
+
+        function loadQuestion() {
+            if (currentStep < questions.length) {
+                const q = questions[currentStep];
+
+                document.getElementById("question-number").innerText =
+                    `Question ${currentStep + 1} of ${questions.length}`;
+
+                document.getElementById("feature-name").innerText =
+                    `Feature: ${q.feature}`;
+
+                document.getElementById("question-prompt").innerText =
+                    q.prompt;
+
+                document.getElementById("speech-preview").innerText = "";
+                document.getElementById("processing-status").innerText = "";
+
+                const optionsBox = document.getElementById("options-box");
+                optionsBox.innerHTML = "";
+
+                const optionLetters = ["A", "B", "C"];
+
+                q.options.forEach((optionText, index) => {
+                    const optionLetter = optionLetters[index];
+
+                    const btn = document.createElement("button");
+                    btn.className = "mcq-btn";
+                    btn.innerHTML = `<b>${optionLetter}.</b> ${optionText}`;
+
+                    btn.onclick = async () => {
+                        if (isListening && recognition) {
+                            recognition.stop();
+                        }
+
+                        await processAnswer(
+                            optionText,
+                            "option_click",
+                            optionLetter
+                        );
+                    };
+
+                    optionsBox.appendChild(btn);
+                });
+
+                triggerBackendVoice(q.prompt);
+            } else {
+                evaluateSession();
+            }
+        }
+
+        function toggleListening() {
+            if (!recognition) {
+                alert("Speech recognition is not supported in this browser.");
+                return;
+            }
+
+            if (!isListening) {
+                isListening = true;
+                document.getElementById("mic-btn").classList.add("active-mic");
+                document.getElementById("speech-preview").innerText =
+                    "Listening...";
+
+                recognition.start();
+            } else {
+                recognition.stop();
+            }
+        }
+
+        function stopMicUI() {
+            isListening = false;
+            document.getElementById("mic-btn").classList.remove("active-mic");
+        }
+
+        async function processAnswer(text, inputMode, selectedOption) {
+            document.getElementById("processing-status").innerText =
+                "Mapping your response...";
+
+            const response = await fetch("/parse_response", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    question_number: currentStep + 1,
+                    input_mode: inputMode,
+                    speech_text: text,
+                    selected_option: selectedOption,
+                    language: selectedLang
+                })
+            });
+
+            const result = await response.json();
+
+            if (!result.success) {
+                alert("Could not process answer: " + result.error);
+                document.getElementById("processing-status").innerText = "";
+                return;
+            }
+
+            mappedAnswers.push(result.mapped_answer);
+
+            currentStep++;
+
+            setTimeout(loadQuestion, 500);
+        }
+
+        async function evaluateSession() {
+            document.getElementById("interview-card").innerHTML =
+                "<h3>Processing 18 Siddha features... Generating Random Forest prediction and real LIME explanation... Please wait.</h3>";
+
+            const response = await fetch("/predict_prakriti", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    mapped_answers: mappedAnswers,
+                    demographics: demographicProfile,
+                    language: selectedLang
+                })
+            });
+
+            const finalData = await response.json();
+
+            if (finalData.success) {
+                window.location.href = finalData.redirect;
+            } else {
+                document.getElementById("interview-card").innerHTML =
+                    `<h3>Error</h3><p>${finalData.error}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
