@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, jsonify, send_file
 from gtts import gTTS
-from google import genai
+import google.generativeai as genai
 from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
 import numpy as np
@@ -144,9 +144,12 @@ def log_patient_to_google_sheet(patient_info, mapped_answers, prediction_label, 
 
 def generate_explainable_ai_rationale(prediction, probabilities, patient_vector, language_code):
     try:
-        client = genai.Client(api_key=GEMINI_API_KEY)
+        genai.configure(api_key=GEMINI_API_KEY)
+
+        gemini_model = genai.GenerativeModel("gemini-2.5-flash")
+
         global_rf_importance = model.feature_importances_
-        
+
         reasoning_payload = []
         for i in range(min(len(patient_vector), len(SELECTED_FEATURES))):
             reasoning_payload.append({
@@ -154,36 +157,37 @@ def generate_explainable_ai_rationale(prediction, probabilities, patient_vector,
                 "user_token_value": int(patient_vector[i]),
                 "mathematical_model_weight": float(global_rf_importance[i])
             })
-            
+
         prompt = f"""
         You are an expert Explainable AI (XAI) clinical interpreter for a Siddha Yakkai Ilakkanam classification software pipeline.
         The machine learning system (Random Forest) evaluated a patient and predicted their dominant constitution as: {prediction}.
-        
+
         Model Probabilities Breakdown:
         - Vata: {probabilities[0]*100:.2f}%
         - Pitta: {probabilities[1]*100:.2f}%
         - Kapha: {probabilities[2]*100:.2f}%
-        
+
         Granular Feature Route Data Matrix:
         {json.dumps(reasoning_payload)}
-        
+
         CRITICAL TASK:
         Generate a cohesive, professional Explainable AI diagnosis report written entirely in the requested regional language context.
-        Identify the top 2 features that had the highest 'mathematical_model_weight' and explain how the patient's choices contributed to the final prediction.
-        
+        Identify the top 2 features that had the highest mathematical model weight and explain how the patient's choices contributed to the final prediction.
+
         LANGUAGE CONSTRAINT:
         - If language_code is 'ta-IN', write the entire output statement in highly natural, readable TAMIL text script.
         - If language_code is 'ml-IN', write the entire output statement in highly natural, readable MALAYALAM text script.
         - Otherwise, write the output statement in standard clinical ENGLISH text.
-        
+
         Do not output any raw code blocks, bullet keys, markdown markers, or JSON tags. Output ONLY plain conversational text paragraphs.
         """
-        response = client.models.generate_content(model='gemini-2.5-flash', contents=prompt)
+
+        response = gemini_model.generate_content(prompt)
         return response.text.strip()
+
     except Exception as e:
         print(f"[XAI LOGGING EXCEPTION]: {e}")
         return f"Classification alignment verified. Predominant attributes trace back directly to classic {prediction} vectors."
-
 @app.route('/')
 def home():
     return render_template('index5.html')
